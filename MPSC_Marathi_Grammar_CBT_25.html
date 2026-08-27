@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="mr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MPSC मराठी व्याकरण CBT - 25 प्रश्न</title>
+<style>
+*{box-sizing:border-box} body{font-family:Arial,sans-serif;background:#f3f5f7;margin:0;padding:16px}
+.container{max-width:760px;margin:auto;background:#fff;padding:22px;border-radius:16px;box-shadow:0 3px 15px #ccc}
+h1{text-align:center;font-size:24px;margin-top:4px} .progress{text-align:center;color:#555;margin:12px}
+.question{font-size:20px;font-weight:bold;line-height:1.5;margin:25px 0 18px}
+.option{display:block;padding:14px;margin:10px 0;border:1px solid #ddd;border-radius:10px;cursor:pointer}
+.option:hover{background:#f5f5f5} input{margin-right:8px}
+button{width:100%;padding:14px;border:0;border-radius:10px;background:#1769aa;color:#fff;font-size:18px;cursor:pointer}
+#result{margin-top:20px;text-align:center;font-size:21px;font-weight:bold;line-height:1.7}
+</style>
+</head>
+<body>
+<div class="container">
+<h1>📝 MPSC मराठी व्याकरण CBT</h1>
+<div class="progress" id="progress"></div>
+<div class="question" id="question"></div>
+<div id="options"></div>
+<button id="nextBtn" onclick="nextQuestion()">पुढील प्रश्न</button>
+<div id="result"></div>
+</div>
+<script>
+const questions=[{"q":'‘रामाने आंबा खाल्ला.’ या वाक्यात ‘रामाने’ कोणती विभक्ती आहे?',"o":['प्रथमा', 'द्वितीया', 'तृतीया', 'षष्ठी'],"a":2},{"q":'‘सुंदर फूल’ या शब्दसमूहातील ‘सुंदर’ कोणत्या शब्दजातीचा आहे?',"o":['नाम', 'सर्वनाम', 'विशेषण', 'क्रियापद'],"a":2},{"q":'‘तो शाळेत गेला.’ या वाक्यात ‘तो’ कोणती शब्दजाती आहे?',"o":['नाम', 'सर्वनाम', 'विशेषण', 'अव्यय'],"a":1},{"q":'‘आणि’ हा शब्द कोणत्या शब्दजातीचा आहे?',"o":['उभयान्वयी अव्यय', 'क्रियाविशेषण', 'विशेषण', 'नाम'],"a":0},{"q":'‘मुलगा वेगाने धावतो.’ येथे ‘वेगाने’ कोणती शब्दजाती आहे?',"o":['नाम', 'विशेषण', 'क्रियाविशेषण', 'सर्वनाम'],"a":2},{"q":'‘घराचा दरवाजा मोठा आहे.’ येथे ‘घराचा’ कोणती विभक्ती आहे?',"o":['द्वितीया', 'तृतीया', 'षष्ठी', 'सप्तमी'],"a":2},{"q":'‘आईने मुलाला पुस्तक दिले.’ येथे ‘मुलाला’ कोणती विभक्ती आहे?',"o":['प्रथमा', 'द्वितीया', 'चतुर्थी', 'पंचमी'],"a":2},{"q":'‘झाडावर पक्षी बसला.’ येथे ‘झाडावर’ कोणती विभक्ती आहे?',"o":['तृतीया', 'षष्ठी', 'सप्तमी', 'संबोधन'],"a":2},{"q":'‘अरे देवा!’ येथे ‘देवा’ कोणती विभक्ती आहे?',"o":['प्रथमा', 'संबोधन', 'षष्ठी', 'द्वितीया'],"a":1},{"q":'‘तो काल आला.’ येथे ‘काल’ कोणत्या शब्दजातीचे उदाहरण आहे?',"o":['नाम', 'क्रियाविशेषण', 'विशेषण', 'सर्वनाम'],"a":1},{"q":'‘पाच मुले मैदानात खेळत आहेत.’ येथे ‘पाच’ कोणत्या प्रकारचे विशेषण आहे?',"o":['गुणवाचक', 'संख्यावाचक', 'सार्वनामिक', 'परिमाणवाचक'],"a":1},{"q":'‘थोडे पाणी आण.’ येथे ‘थोडे’ कोणत्या प्रकारचे विशेषण आहे?',"o":['गुणवाचक', 'संख्यावाचक', 'परिमाणवाचक', 'दर्शक'],"a":2},{"q":'‘हा माझा मित्र आहे.’ येथे ‘हा’ कोणत्या प्रकारचे सर्वनाम आहे?',"o":['पुरुषवाचक', 'दर्शक', 'प्रश्नार्थक', 'संबंधी'],"a":1},{"q":'‘कोण आला?’ येथे ‘कोण’ कोणत्या प्रकारचे सर्वनाम आहे?',"o":['दर्शक', 'प्रश्नार्थक', 'पुरुषवाचक', 'अनिश्चित'],"a":1},{"q":'‘जो मेहनत करतो तो यशस्वी होतो.’ येथे ‘जो’ कोणते सर्वनाम आहे?',"o":['संबंधी', 'दर्शक', 'प्रश्नार्थक', 'पुरुषवाचक'],"a":0},{"q":'‘कदाचित तो आज येईल.’ येथे ‘कदाचित’ कोणत्या शब्दजातीचे आहे?',"o":['उभयान्वयी अव्यय', 'क्रियाविशेषण', 'शब्दयोगी अव्यय', 'विशेषण'],"a":1},{"q":'‘तो आला पण थांबला नाही.’ येथे ‘पण’ कोणते अव्यय आहे?',"o":['शब्दयोगी', 'उभयान्वयी', 'क्रियाविशेषण', 'केवलप्रयोगी'],"a":1},{"q":'‘घरासमोर झाड आहे.’ येथे ‘समोर’ कोणत्या प्रकारचे अव्यय आहे?',"o":['शब्दयोगी अव्यय', 'उभयान्वयी अव्यय', 'केवलप्रयोगी अव्यय', 'क्रियाविशेषण'],"a":0},{"q":'‘वा! किती सुंदर दृश्य आहे!’ येथे ‘वा’ कोणते अव्यय आहे?',"o":['शब्दयोगी', 'उभयान्वयी', 'केवलप्रयोगी', 'क्रियाविशेषण'],"a":2},{"q":'‘तो हळू चालतो.’ येथे ‘हळू’ कोणत्या प्रकारचे क्रियाविशेषण आहे?',"o":['कालवाचक', 'रीतिवाचक', 'स्थलवाचक', 'प्रमाणवाचक'],"a":1},{"q":'‘उद्या परीक्षा आहे.’ येथे ‘उद्या’ कोणत्या प्रकारचे क्रियाविशेषण आहे?',"o":['रीतिवाचक', 'कालवाचक', 'स्थलवाचक', 'प्रमाणवाचक'],"a":1},{"q":'‘तो येथे राहतो.’ येथे ‘येथे’ कोणत्या प्रकारचे क्रियाविशेषण आहे?',"o":['कालवाचक', 'रीतिवाचक', 'स्थलवाचक', 'प्रमाणवाचक'],"a":2},{"q":'‘राम पुस्तक वाचतो.’ या वाक्यातील ‘वाचतो’ कोणत्या शब्दजातीचे आहे?',"o":['नाम', 'विशेषण', 'क्रियापद', 'सर्वनाम'],"a":2},{"q":'‘मोठा डोंगर दिसतो.’ येथे ‘मोठा’ कोणते विशेषण आहे?',"o":['गुणवाचक', 'संख्यावाचक', 'परिमाणवाचक', 'सार्वनामिक'],"a":0},{"q":'‘माझे घर सुंदर आहे.’ येथे ‘माझे’ कोणत्या प्रकारचे सर्वनाम आहे?',"o":['दर्शक', 'पुरुषवाचक', 'संबंधी', 'प्रश्नार्थक'],"a":1}];
+let current=0,score=0;
+function loadQuestion(){
+ const x=questions[current];
+ document.getElementById("progress").textContent=`प्रश्न ${current+1} / ${questions.length}`;
+ document.getElementById("question").textContent=x.q;
+ const box=document.getElementById("options"); box.innerHTML="";
+ x.o.forEach((opt,i)=>{
+   box.innerHTML+=`<label class="option"><input type="radio" name="answer" value="${i}">${String.fromCharCode(65+i)}. ${opt}</label>`;
+ });
+ document.getElementById("nextBtn").textContent=current===questions.length-1?"निकाल पाहा":"पुढील प्रश्न";
+}
+function nextQuestion(){
+ const selected=document.querySelector('input[name="answer"]:checked');
+ if(!selected){alert("कृपया एक पर्याय निवडा.");return;}
+ if(Number(selected.value)===questions[current].a) score++;
+ current++;
+ if(current<questions.length) loadQuestion(); else showResult();
+}
+function showResult(){
+ document.getElementById("progress").textContent="चाचणी पूर्ण झाली 🎉";
+ document.getElementById("question").textContent="";
+ document.getElementById("options").innerHTML="";
+ document.getElementById("nextBtn").style.display="none";
+ const percent=Math.round(score/questions.length*100);
+ document.getElementById("result").innerHTML=`तुमचा गुण: ${score} / ${questions.length}<br>टक्केवारी: ${percent}%<br><br><button onclick="location.reload()">पुन्हा सोडवा</button>`;
+}
+loadQuestion();
+</script>
+</body>
+</html>
