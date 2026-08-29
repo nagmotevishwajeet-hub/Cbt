@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="mr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>मराठी व्याकरण CBT</title>
+<style>
+body{font-family:Arial,sans-serif;background:#eef3f8;margin:0;color:#222}
+header{background:#164e7a;color:white;padding:15px;position:sticky;top:0;z-index:10}
+h1{font-size:21px;margin:0 0 10px}
+.stats{display:flex;gap:8px;flex-wrap:wrap}
+.badge{background:white;color:#164e7a;padding:6px 10px;border-radius:20px;font-weight:bold}
+.container{max-width:850px;margin:auto;padding:12px}
+.card{background:white;padding:17px;margin:12px 0;border-radius:12px;box-shadow:0 2px 8px #0002}
+.question{font-size:18px;font-weight:bold;margin-bottom:15px}
+.option{display:block;border:1px solid #ddd;padding:12px;margin:8px 0;border-radius:9px;cursor:pointer}
+.option:hover{background:#f0f6fa}
+.grid{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+.num{padding:9px;text-align:center;background:#e5ebf0;border-radius:7px;cursor:pointer}
+.num.done{background:#b9e6c3}
+.num.current{outline:3px solid #164e7a}
+.nav{position:sticky;bottom:0;background:white;padding:10px;display:flex;gap:8px;justify-content:space-between;box-shadow:0 -2px 8px #0002}
+button{border:0;background:#164e7a;color:white;padding:11px 15px;border-radius:8px;font-weight:bold;cursor:pointer}
+button:disabled{opacity:.45}
+#result{display:none}
+.score{font-size:30px;font-weight:bold}
+.review{border-top:1px solid #ddd;padding:12px 0}
+.correct{color:green;font-weight:bold}
+.wrong{color:red;font-weight:bold}
+.explanation{background:#f5f7f9;padding:10px;border-radius:8px}
+</style>
+</head>
+
+<body>
+
+<header>
+<h1>मराठी व्याकरण CBT — 25 प्रश्न</h1>
+
+<div class="stats">
+<span class="badge">⏱️ <span id="timer">30:00</span></span>
+<span class="badge">सोडवले: <span id="done">0</span>/25</span>
+<span class="badge">प्रश्न: <span id="qn">1</span>/25</span>
+</div>
+</header>
+
+<div class="container">
+
+<div class="card">
+<b>प्रश्न निवडा:</b>
+<div class="grid" id="grid"></div>
+</div>
+
+<div id="quiz"></div>
+
+<div class="nav" id="nav">
+<button id="prev">⬅️ मागे</button>
+<button id="submit">🏁 Submit</button>
+<button id="next">पुढे ➡️</button>
+</div>
+
+<div class="card" id="result"></div>
+
+</div>
+
+<script>
+
+const questions = [
+
+["खालीलपैकी सजातीय स्वरांची जोडी सांगा.",
+["अ – इ","आ – उ","आ – ई","इ – ई"],3,
+"इ – ई ही सजातीय स्वरांची जोडी आहे."],
+
+["‘या पाटीखाली दडलंय काय?’ अधोरेखित शब्दाची जात ओळखा.",
+["केवलप्रयोगी अव्यय","उभयान्वयी अव्यय","क्रियाविशेषण अव्यय","शब्दयोगी अव्यय"],3,
+"‘खाली’ हा शब्द नामाशी संबंध दाखवतो, म्हणून तो शब्दयोगी अव्यय आहे."],
+
+["सामान्यनाम असलेला शब्द ओळखा.",
+["खुशी","गरीबी","गाय","किती"],2,
+"‘गाय’ हे सामान्यनाम आहे."],
+
+["‘सामर्थ्य’ या शब्दाचा समानार्थी नसलेला शब्द ओळखा.",
+["ताकद","ललित","शक्ती","बळ"],1,
+"ताकद, शक्ती आणि बळ हे सामर्थ्याचे समानार्थी आहेत; ललित नाही."],
+
+["मराठी राजभाषा दिन कधी असतो?",
+["1 मे","15 ऑगस्ट","27 फेब्रुवारी","1 जानेवारी"],0,
+"तुमच्या दिलेल्या उत्तरतालिकेनुसार योग्य पर्याय 1 मे आहे."],
+
+["‘आम्ही जातो आमच्या गावा.’ या वाक्यातील उद्देश ओळखा.",
+["गावा","आम्ही","जातो","आमच्या"],1,
+"‘आम्ही’ हे क्रिया करणारे कर्ता/उद्देश आहे."],
+
+["‘विहीण’ या शब्दाचे अनेकवचन लिहा.",
+["विहीण","विहिण्या","विहिणी","वाहिणी"],2,
+"‘विहीण’चे अनेकवचन ‘विहिणी’ आहे."],
+
+["खालीलपैकी शुद्ध शब्द ओळखा.",
+["अनिभिज्ञ","आनिभिज्ञ","आभ्युदय","अधपतन"],2,
+"‘आभ्युदय’ हा शुद्ध शब्द आहे."],
+
+["‘आईने मुलीला शाळेत घातले.’ या वाक्यातील ‘ला’ हा प्रत्यय कोणत्या विभक्तीचा आहे?",
+["तृतीया","द्वितीया","पंचमी","सप्तमी"],1,
+"‘मुलीला’ येथे ‘ला’ हा द्वितीया विभक्तीचा प्रत्यय आहे."],
+
+["खालीलपैकी घोष व्यंजन कोणते?",
+["श","च","ट","घ"],3,
+"‘घ’ हे घोष व्यंजन आहे."],
+
+["जसा पक्ष्यांचा थवा असतो, तसे पाठ्यपुस्तकांचा ______ असतो.",
+["संच","गठ्ठा","ढीग","थप्पी"],0,
+"अनेक पुस्तके एकत्र असतील तर त्यांचा ‘संच’ असा शब्दप्रयोग होतो."],
+
+["खालीलपैकी स्वरसंधीचा पर्याय ओळखा.",
+["सदाचार","देवालय","दुर्जन","निरंतर"],1,
+"‘देव + आलय = देवालय’ ही स्वरसंधी आहे."],
+
+["‘तू ये किंवा न ये, मी जाणारच.’ उभयान्वयी अव्ययाचा प्रकार ओळखा.",
+["समुच्चयबोधक","विकल्पबोधक","न्यूनत्वबोधक","परिणामबोधक"],1,
+"‘किंवा’ पर्याय दाखवते, म्हणून ते विकल्पबोधक आहे."],
+
+["‘नर्तिका’ या शब्दाचा विरुद्धलिंगी शब्द ओळखा.",
+["नर्तेन","नर्तनकार","नर्तक","नृत्यक"],2,
+"‘नर्तिका’चे पुल्लिंगी रूप ‘नर्तक’ आहे."],
+
+["‘कंटाळवाणे नीरस भाषण’ — या अर्थाचा अलंकारिक शब्द निवडा.",
+["एकमानी","एकांडा","एरंडाचे गुऱ्हाळ","एकसुरी"],2,
+"‘एरंडाचे गुऱ्हाळ’ हा नीरस, लांबणाऱ्या भाषणासाठी वापरला जाणारा शब्दप्रयोग आहे."],
+
+["सामान्यरूप न होणारा शब्द ओळखा.",
+["झाड","सिंह","मुलगी","फोटो"],3,
+"‘फोटो’चे सामान्यरूप बदलत नाही."],
+
+["उपसर्ग जोडून तयार झालेला शब्द ओळखा.",
+["अनुभव","चोर","रक्षक","नवीन"],0,
+"‘अनु’ हा उपसर्ग जोडून ‘अनुभव’ हा शब्द तयार झाला आहे."],
+
+["‘आपण स्वतः दोन शब्द बोला.’ सर्वनामाचा प्रकार ओळखा.",
+["प्रश्नार्थक","आत्मवाचक","पुरुषवाचक","दर्शक"],1,
+"‘स्वतः’ हे आत्मवाचक सर्वनाम आहे."],
+
+["‘पोलिसांनी चोर पकडला.’ प्रयोग ओळखा.",
+["कर्मणी","कर्तरी","भावे","सकर्मक कर्तरी"],0,
+"तुमच्या दिलेल्या उत्तरतालिकेनुसार हा कर्मणी प्रयोग आहे."],
+
+["‘जेवायला पुष्कळ लोक आले होते.’ संख्याविशेषणाचा प्रकार ओळखा.",
+["आवृत्तीवाचक","अनिश्चित","क्रमवाचक","गणनावाचक"],1,
+"‘पुष्कळ’ निश्चित संख्या सांगत नसल्याने अनिश्चित संख्याविशेषण आहे."],
+
+["‘किल्ल्याच्या भोवतालीची भिंत’ — शब्दसमूहाबद्दल एक शब्द निवडा.",
+["तट","टाकसाळ","बुरुज","चक्रव्यूह"],0,
+"किल्ल्याभोवतीची संरक्षणात्मक भिंत म्हणजे ‘तट’."],
+
+["खाली दिलेल्या शब्दांपैकी क्रियापद ओळखा.",
+["माणूस","माणुसकी","माणसाळणे","माणुसपण"],2,
+"‘माणसाळणे’ हे क्रिया दर्शवते."],
+
+["‘चांगलेवाईट’ या शब्दाचा समास ओळखा.",
+["अव्ययीभाव","तत्पुरुष","द्वंद्व","द्विगु"],2,
+"‘चांगले आणि वाईट’ असा अर्थ असल्याने द्वंद्व समास आहे."],
+
+["‘त्याने निबंध लिहिला होता.’ काळ ओळखा.",
+["वर्तमान","पूर्ण भूतकाळ","चालू भूतकाळ","भविष्यकाळ"],1,
+"‘लिहिला होता’ या रचनेत पूर्ण झालेली भूतकाळातील क्रिया आहे."],
+
+["खालीलपैकी क्रियाविशेषण अव्यय ओळखा.",
+["भरभर","मोठा","की","आणि"],0,
+"‘भरभर’ हे क्रियेची रीती दर्शवते, म्हणून क्रियाविशेषण अव्यय आहे."]
+
+];
+
+let current=0;
+let answers=Array(25).fill(null);
+let time=1800;
+let submitted=false;
+
+function render(){
+
+let q=questions[current];
+
+document.getElementById("qn").textContent=current+1;
+
+let html='<div class="card">'+
+'<div class="question">'+(current+1)+'. '+q[0]+'</div>';
+
+q[1].forEach((option,i)=>{
+
+html+='<label class="option">'+
+'<input type="radio" name="answer" value="'+i+'" '+
+(answers[current]===i?"checked":"")+
+'> '+String.fromCharCode(65+i)+') '+option+
+'</label>';
+
+});
+
+html+='</div>';
+
+document.getElementById("quiz").innerHTML=html;
+
+document.querySelectorAll('input[name="answer"]').forEach(x=>{
+
+x.onchange=function(){
+
+answers[current]=Number(this.value);
+update();
+
+};
+
+});
+
+document.getElementById("prev").disabled=current===0;
+document.getElementById("next").disabled=current===24;
+
+update();
+
+}
+
+function update(){
+
+document.getElementById("done").textContent=
+answers.filter(x=>x!==null).length;
+
+document.querySelectorAll(".num").forEach((e,i)=>{
+
+e.classList.toggle("done",answers[i]!==null);
+e.classList.toggle("current",i===current);
+
+});
+
+}
+
+function go(i){
+
+if(i<0||i>24)return;
+
+current=i;
+render();
+
+window.scrollTo({top:0,behavior:"smooth"});
+
+}
+
+document.getElementById("grid").innerHTML=
+questions.map((q,i)=>
+'<div class="num" onclick="go('+i+')">'+(i+1)+'</div>'
+).join("");
+
+document.getElementById("prev").onclick=
+()=>go(current-1);
+
+document.getElementById("next").onclick=
+()=>go(current+1);
+
+function submitTest(){
+
+if(submitted)return;
+
+submitted=true;
+
+let score=0;
+
+questions.forEach((q,i)=>{
+
+if(answers[i]===q[2])score++;
+
+});
+
+let result=
+'<h2>🏆 Test निकाल</h2>'+
+'<div class="score">'+score+' / 25</div>'+
+'<p>टक्केवारी: '+(score/25*100).toFixed(2)+'%</p>'+
+'<hr><h3>📋 उत्तर व स्पष्टीकरण</h3>';
+
+questions.forEach((q,i)=>{
+
+let correct=answers[i]===q[2];
+
+result+=
+'<div class="review">'+
+'<b>'+(i+1)+'. '+q[0]+'</b>'+
+'<p>तुमचे उत्तर: <span class="'+
+(correct?"correct":"wrong")+'">'+
+(answers[i]===null?"सोडवले नाही":q[1][answers[i]])+
+'</span></p>'+
+'<p>योग्य उत्तर: <span class="correct">'+
+q[1][q[2]]+'</span></p>'+
+'<div class="explanation">📝 <b>स्पष्टीकरण:</b> '+
+q[3]+'</div>'+
+'</div>';
+
+});
+
+result+='<button onclick="location.reload()">🔄 पुन्हा Test द्या</button>';
+
+document.getElementById("result").innerHTML=result;
+
+document.getElementById("result").style.display="block";
+document.getElementById("quiz").style.display="none";
+document.getElementById("nav").style.display="none";
+
+window.scrollTo({
+top:document.body.scrollHeight,
+behavior:"smooth"
+});
+
+}
+
+document.getElementById("submit").onclick=submitTest;
+
+setInterval(function(){
+
+if(submitted)return;
+
+time--;
+
+if(time<=0){
+
+time=0;
+submitTest();
+
+}
+
+let m=Math.floor(time/60);
+let s=time%60;
+
+document.getElementById("timer").textContent=
+String(m).padStart(2,"0")+":"+
+String(s).padStart(2,"0");
+
+},1000);
+
+render();
+
+</script>
+
+</body>
+</html>
